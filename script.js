@@ -17,6 +17,7 @@ dateEl.setAttribute("min", today);
 let countdownTitle = "";
 let countdownValue = "";
 let countdownDate = Date;
+let saveCountdown = {};
 
 const second = 1000;
 const minute = second * 60;
@@ -30,6 +31,11 @@ function updateDOM() {
 
   countdownActive = setInterval(() => {
     const distance = countdownDate - new Date(Date.now());
+    saveCountdown = {
+      title: countdownTitle,
+      date: countdownDate,
+    };
+    localStorage.setItem("countdown", JSON.stringify(saveCountdown));
 
     inputContainer.hidden = true;
 
@@ -73,6 +79,20 @@ function resetCountdown() {
   dateEl.value = "";
 }
 
+function loadCountdown() {
+  saveCountdown = JSON.parse(localStorage.getItem("countdown"));
+  console.log(saveCountdown);
+  if (saveCountdown) {
+    inputContainer.hidden = true;
+    countdownTitle = saveCountdown.title;
+    countdownValue = saveCountdown.date;
+    countdownDate = new Date(countdownValue).getTime();
+    updateDOM();
+  }
+}
+
 countdownForm.addEventListener("submit", updateCountdown);
 resetBtn.addEventListener("click", resetCountdown);
 completeBtn.addEventListener("click", resetCountdown);
+
+loadCountdown();
